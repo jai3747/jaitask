@@ -3,38 +3,46 @@ name: Terraform Deployment
 on:
   push:
     branches:
-      - main  # Change this to your branch name if different
+      - main
   pull_request:
     branches:
-      - main  # Change this to your branch name if different
+      - main
 
 jobs:
   terraform:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Download and Unzip Terraform
+    - name: Download Terraform
       run: |
-        terraform_version="1.5.0"
-        curl -LO "https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip"
-        unzip terraform_${terraform_version}_linux_amd64.zip
+        curl -LO "https://releases.hashicorp.com/terraform/1.4.6/terraform_1.4.6_linux_amd64.zip"
+        unzip terraform_1.4.6_linux_amd64.zip
         sudo mv terraform /usr/local/bin/
 
     - name: Verify Terraform Installation
       run: terraform version
 
-    - name: Download and Unzip AWS CLI
+    - name: Download AWS CLI
       run: |
-        aws_cli_version="2.10.14"
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${aws_cli_version}.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
+        curl "https://d1uj6qtbmh3dt5.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        ls -lh awscliv2.zip
 
-    - name: Install AWS CLI
+    - name: Verify AWS CLI Download
       run: |
+        if [ -s awscliv2.zip ]; then
+          echo "AWS CLI zip file is downloaded and not empty."
+        else
+          echo "Error: AWS CLI zip file is empty or not downloaded properly."
+          exit 1
+        fi
+
+    - name: Unzip and Install AWS CLI
+      run: |
+        unzip awscliv2.zip
         sudo ./aws/install
         aws --version
 
@@ -53,7 +61,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
-    - name: Download and Install Nginx
+    - name: Install Nginx
       run: |
         sudo apt-get update
         sudo apt-get install -y nginx
