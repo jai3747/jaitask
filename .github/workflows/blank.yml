@@ -12,16 +12,30 @@ jobs:
   terraform:
     name: Terraform Apply
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Download and Install AWS CLI
+    - name: Download and Unzip Terraform
       run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        terraform_version="1.5.0"
+        curl -LO "https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip"
+        unzip terraform_${terraform_version}_linux_amd64.zip
+        sudo mv terraform /usr/local/bin/
+
+    - name: Verify Terraform Installation
+      run: terraform version
+
+    - name: Download AWS CLI
+      run: |
+        aws_cli_version="2.10.14"
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${aws_cli_version}.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
-        sudo ./aws/install
+
+    - name: Install AWS CLI
+      run: |
+        sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
         aws --version
 
     - name: Configure AWS CLI
@@ -29,14 +43,6 @@ jobs:
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set region ${{ secrets.AWS_REGION }}
-
-    - name: Download and Install Terraform
-      run: |
-        terraform_version="1.9.2"  # Use the specified version
-        wget "https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip"
-        unzip terraform_${terraform_version}_linux_amd64.zip
-        sudo mv terraform /usr/local/bin/
-        terraform -v
 
     - name: Terraform Init
       run: terraform init
@@ -47,7 +53,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve
 
-    - name: Install Nginx
+    - name: Download and Install Nginx
       run: |
         sudo apt-get update
         sudo apt-get install -y nginx
