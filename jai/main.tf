@@ -2,6 +2,10 @@ provider "aws" {
   region = var.aws_region
 }
 
+export AWS_ACCESS_KEY_ID="AKIATCKAPVUR3KGLFKWT"
+export AWS_SECRET_ACCESS_KEY="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"
+
+
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr_block
 
