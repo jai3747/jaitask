@@ -78,3 +78,7 @@ jobs:
         sudo systemctl enable nginx
     - name: terraform destroy
       run: terraform destroy -auto-approve
+      working-directory: jai
+
+
+
