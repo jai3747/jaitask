@@ -1,0 +1,65 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - main  # Change this to your branch name if different
+  pull_request:
+    branches:
+      - main  # Change this to your branch name if different
+
+jobs:
+  terraform:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Download and Unzip Terraform
+      run: |
+        terraform_version="1.5.0"
+        curl -LO "https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip"
+        unzip terraform_${terraform_version}_linux_amd64.zip
+        sudo mv terraform /usr/local/bin/
+
+    - name: Verify Terraform Installation
+      run: terraform version
+
+    - name: Download and Unzip AWS CLI
+      run: |
+        aws_cli_version="2.10.14"
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${aws_cli_version}.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+
+    - name: Install AWS CLI
+      run: |
+        sudo ./aws/install
+        aws --version
+
+    - name: Configure AWS CLI
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+
+    - name: Download and Install Nginx
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nginx
+        sudo systemctl start nginx
+        sudo systemctl enable nginx
+
+    - name: Verify Nginx Installation
+      run: |
+        curl -I http://localhost
