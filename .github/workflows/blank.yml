@@ -76,3 +76,5 @@ jobs:
         sudo apt-get install -y nginx
         sudo systemctl start nginx
         sudo systemctl enable nginx
+    - name: terraform destroy
+      run: terraform destroy -auto-approve
