@@ -15,7 +15,6 @@ variable "s3_bucket_name" {
   type        = string
 }
 
-
 variable "s3_key" {
   description = "The key for the state file in the S3 bucket"
   type        = string
@@ -30,7 +29,7 @@ variable "subnet_cidr_block" {
 variable "availability_zone" {
   description = "The availability zone for the subnet"
   type        = string
-  default     = "eu-north-1a"
+  default     = "ap-south-1"
 }
 
 variable "ami_id" {
@@ -42,5 +41,5 @@ variable "ami_id" {
 variable "instance_type" {
   description = "The instance type for the EC2 instance"
   type        = string
-  default     = "t3.micro"
-
+  default     = "t2.micro"
+}
