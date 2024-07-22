@@ -19,8 +19,7 @@ jobs:
 
     - name: Download and Install AWS CLI
       run: |
-        aws_cli_version="2.10.14"  # Specify the latest version
-        curl "https://d1uj6qtbmh3dt5.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
         sudo ./aws/install
         aws --version
@@ -33,11 +32,11 @@ jobs:
 
     - name: Download and Install Terraform
       run: |
-        terraform_version="1.4.6"  # Specify the latest version
-        curl -LO "https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip"
+        terraform_version="1.9.2"  # Use the specified version
+        wget "https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip"
         unzip terraform_${terraform_version}_linux_amd64.zip
         sudo mv terraform /usr/local/bin/
-        terraform --version
+        terraform -v
 
     - name: Terraform Init
       run: terraform init
