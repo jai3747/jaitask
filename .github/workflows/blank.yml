@@ -40,15 +40,15 @@ jobs:
         terraform -v
 
     - name: Terraform Init
-      working-directory: ./path/to/terraform/config  # Set the correct path
+      working-directory: ./jaitask/jai/
       run: terraform init
 
     - name: Terraform Plan
-      working-directory: ./path/to/terraform/config  # Set the correct path
+      working-directory: ./jaitask/jai/
       run: terraform plan
 
     - name: Terraform Apply
-      working-directory: ./path/to/terraform/config  # Set the correct path
+      working-directory: ./jaitask/jai/
       run: terraform apply -auto-approve
 
     - name: Install Nginx
