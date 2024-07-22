@@ -38,21 +38,25 @@ jobs:
         unzip terraform_${terraform_version}_linux_amd64.zip
         sudo mv terraform /usr/local/bin/
         terraform -v
-     - name: Set working directory
+
+    - name: Set working directory
       run: cd jai
 
     - name: Terraform Init
       run: terraform init
+      working-directory: jai
 
     - name: Terraform Plan
       run: terraform plan
+      working-directory: jai
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
+      working-directory: jai
 
     - name: Install Nginx
       run: |
         sudo apt-get update
         sudo apt-get install -y nginx
         sudo systemctl start nginx
-        sudo systemctl enable nginx   
+        sudo systemctl enable nginx
