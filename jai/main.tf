@@ -11,9 +11,9 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "subnet" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.subnet_cidr_block
-  availability_zone = var.availability_zone
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.subnet_cidr_block
+  availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
 
   tags = {
@@ -31,20 +31,11 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.main.id
-  tags = {
-    Name = "main-igw"
-  }
-}
-
-resource "aws_route_table" "rt" {
-  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.gw.id
+    gateway_id = aws_internet_gateway.igw.id
   }
-}
-
 
   tags = {
     Name = "main-rt"
@@ -63,7 +54,7 @@ resource "aws_security_group" "sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-	cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -89,13 +80,14 @@ resource "aws_instance" "web" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.subnet.id
-  vpc_security_group_ids = [aws_security_group.sg.id]  # Change this line
+  vpc_security_group_ids = [aws_security_group.sg.id]
 
   associate_public_ip_address = true
 
   tags = {
     Name = "web"
   }
+
   user_data = <<-EOF
               #!/bin/bash
               sudo apt-get update
@@ -103,6 +95,4 @@ resource "aws_instance" "web" {
               sudo systemctl start nginx
               sudo systemctl enable nginx
               EOF
-}    
-  
-  
+}
