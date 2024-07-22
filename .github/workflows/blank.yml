@@ -23,9 +23,7 @@ jobs:
       run: |
         git config --global user.name "jai3747"
         git config --global user.email "mjai3747@gmail.com"
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-    
     - name: Install dependencies
       run: |
         sudo apt-get update
